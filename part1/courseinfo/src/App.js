@@ -52,18 +52,6 @@ const App = () => {
       <Total parts={parts} />
     </div>
   )
-
-/*   return (
-    <div>
-      <Header course={course} />
-      <Content 
-        data1={part1}
-        data2={part2}
-        data3={part3}
-      />
-      <Total exo={part1.exercises+part2.exercises+part3.exercises}/>
-    </div>
-  ) */
 }
 
 export default App

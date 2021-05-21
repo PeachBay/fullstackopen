@@ -9,8 +9,11 @@ const Button = (props) => {
 }
 
 const Statistic = (props) => {
-  return(
-    <div>{props.text} {props.value}</div>
+  return (
+    <tr>
+      <td>{props.text}</td>
+      <td>{props.value}</td>
+    </tr>
   )
 }
 
@@ -27,12 +30,17 @@ const Statistics = (props) => {
   return(
     <div>
       <h2>Statistics</h2>
-      <Statistic text="good" value ={props.good} />
-      <Statistic text="neutral" value ={props.neutral} />
-      <Statistic text="bad" value ={props.bad} />
-      <Statistic text="all" value ={props.all} />
-      <Statistic text="average" value ={props.average} />
-      <Statistic text="positive" value ={props.positive+'%'} />
+
+      <table>
+        <tbody>
+          <Statistic text="good" value ={props.good} />
+          <Statistic text="neutral" value ={props.neutral} />
+          <Statistic text="bad" value ={props.bad} />
+          <Statistic text="all" value ={props.all} />
+          <Statistic text="average" value ={props.average} />
+          <Statistic text="positive" value ={props.positive+'%'} />
+        </tbody>
+      </table>
     </div>
   )
 }
@@ -43,7 +51,7 @@ const App = () => {
   const [neutral, setNeutral] = useState(0)
   const [bad, setBad] = useState(0)
   const all = good+neutral+bad
-  const average = all/3
+  const average = (good-bad)/all
   const positive = good/all*100
 
   const addGood = () => setGood(good + 1)
@@ -69,8 +77,8 @@ const App = () => {
         neutral={neutral}
         bad={bad}
         all={all}
-        average={average.toPrecision(2)}
-        positive={positive.toPrecision(2)}
+        average={average.toPrecision(1)}
+        positive={positive.toPrecision(3)}
       />
 
     </div>

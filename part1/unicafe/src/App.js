@@ -1,24 +1,24 @@
 import React, { useState } from 'react'
 
-const Button = (props) => {
+const Button = ({handleClick, text}) => {
   return (
-    <button onClick={props.handleClick}>
-      {props.text}
+    <button onClick={handleClick}>
+      {text}
     </button>
   )
 }
 
-const Statistic = (props) => {
+const Statistic = ({text, value}) => {
   return (
     <tr>
-      <td>{props.text}</td>
-      <td>{props.value}</td>
+      <td>{text}</td>
+      <td>{value}</td>
     </tr>
   )
 }
 
-const Statistics = (props) => {
-  if (props.all === 0) {
+const Statistics = ({good, neutral, bad, all, average, positive}) => {
+  if (all === 0) {
     return (
       <div>
         <h2>Statistics</h2>
@@ -33,12 +33,12 @@ const Statistics = (props) => {
 
       <table>
         <tbody>
-          <Statistic text="good" value ={props.good} />
-          <Statistic text="neutral" value ={props.neutral} />
-          <Statistic text="bad" value ={props.bad} />
-          <Statistic text="all" value ={props.all} />
-          <Statistic text="average" value ={props.average} />
-          <Statistic text="positive" value ={props.positive+'%'} />
+          <Statistic text="good" value ={good} />
+          <Statistic text="neutral" value ={neutral} />
+          <Statistic text="bad" value ={bad} />
+          <Statistic text="all" value ={all} />
+          <Statistic text="average" value ={average} />
+          <Statistic text="positive" value ={positive+'%'} />
         </tbody>
       </table>
     </div>

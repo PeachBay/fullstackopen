@@ -36,15 +36,16 @@ const App = () => {
     if ( persons.some( person => person.name.toLowerCase() === newName.toLowerCase()) ) {
       window.alert(`${newName} is already added to phonebook`);
     } else {
-      // Add the input in the existing array of person
-      const newPersons = persons.concat(personObject)
-      
       // Save the new input on server
       personService
         .create(personObject)
         .then(response => {
           console.log('create entry with personService OK')
           console.log(response)
+
+          // Add the input in the existing array of person
+          const newPersons = persons.concat(response)
+
           setPersons(newPersons)
           setFilteredPersons(newPersons)
           // Reset the input string
@@ -53,6 +54,20 @@ const App = () => {
           setFilteredPersonValue('')
         })
     }
+  }
+
+  const removePerson = (event, id) => {
+    event.preventDefault()
+    console.log(id)
+    personService
+    .remove(id)
+    .then( () => {
+      console.log('delete entry with personService OK')
+      let newList = persons.filter( (person) => person.id !== id )
+
+      setPersons(newList)
+      setFilteredPersons(newList)
+    })
   }
 
   // save user input to array
@@ -93,7 +108,9 @@ const App = () => {
 
       <h3>Numbers</h3>
       
-      <Persons dataPerson={filteredPersons} />
+      <Persons 
+        dataPerson={filteredPersons}
+        handleRemove={removePerson} />
     </div>
   )
 }

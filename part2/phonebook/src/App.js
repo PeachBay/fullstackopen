@@ -27,7 +27,7 @@ const App = () => {
 
   const addPerson = (event) => {
     event.preventDefault()
-    // create object person to store the data input
+    // Create object person to store the data input
     const personObject = {
       name: newName,
       number: newNumber
@@ -36,14 +36,21 @@ const App = () => {
     if ( persons.some( person => person.name.toLowerCase() === newName.toLowerCase()) ) {
       window.alert(`${newName} is already added to phonebook`);
     } else {
-      const newPersons = persons.concat(personObject)
       // Add the input in the existing array of person
-      setPersons(newPersons)
-      setFilteredPersons(newPersons)
-      // Reset the input string
-      setNewName('')
-      setNewNumber('')
-      setFilteredPersonValue('')
+      const newPersons = persons.concat(personObject)
+      
+      // Save the new input on server
+      axios
+        .post('http://localhost:3001/persons', personObject)
+        .then(response => {
+          console.log(response)
+          setPersons(newPersons)
+          setFilteredPersons(newPersons)
+          // Reset the input string
+          setNewName('')
+          setNewNumber('')
+          setFilteredPersonValue('')
+        })
     }
   }
 

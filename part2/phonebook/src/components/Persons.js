@@ -7,7 +7,7 @@ const Persons = ({dataPerson, handleRemove}) => {
         person => 
         <li key={person.name}>
           {person.name} {person.number}
-          <button onClick={(event) => {handleRemove(event, person.id)}}>delete</button>
+          <button onClick={(event) => {handleRemove(event, person)}}>delete</button>
         </li>
       )}
      </div>

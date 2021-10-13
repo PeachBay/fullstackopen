@@ -56,14 +56,15 @@ const App = () => {
     }
   }
 
-  const removePerson = (event, id) => {
+  const removePerson = (event, removed) => {
     event.preventDefault()
-    console.log(id)
+    window.confirm(`Delete ${removed.id}?`)
+
     personService
-    .remove(id)
+    .remove(removed.id)
     .then( () => {
       console.log('delete entry with personService OK')
-      let newList = persons.filter( (person) => person.id !== id )
+      let newList = persons.filter( (person) => removed.id !== person.id )
 
       setPersons(newList)
       setFilteredPersons(newList)

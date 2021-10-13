@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react'
-import axios from 'axios'
 import Filter from './components/Filter'
 import Persons from './components/Persons'
 import PersonForm from './components/PersonForm'
+import personService from './services/persons'
 
 const App = () => {
 
@@ -16,12 +16,12 @@ const App = () => {
   // fetch data from json
   useEffect(() => {
     console.log('in effect')
-    axios
-      .get('http://localhost:3001/persons')
+    personService
+      .getAll()
       .then(response => {
-        console.log('promise fulfilled')
-        setPersons(response.data)
-        setFilteredPersons(response.data)
+        console.log('personService OK')
+        setPersons(response)
+        setFilteredPersons(response)
       })
   }, [])
 
@@ -40,9 +40,10 @@ const App = () => {
       const newPersons = persons.concat(personObject)
       
       // Save the new input on server
-      axios
-        .post('http://localhost:3001/persons', personObject)
+      personService
+        .create(personObject)
         .then(response => {
+          console.log('create entry with personService OK')
           console.log(response)
           setPersons(newPersons)
           setFilteredPersons(newPersons)

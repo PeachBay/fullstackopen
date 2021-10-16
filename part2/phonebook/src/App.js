@@ -34,16 +34,30 @@ const App = () => {
     }
 
     if ( persons.some( person => person.name.toLowerCase() === newName.toLowerCase()) ) {
-      window.alert(`${newName} is already added to phonebook`);
+      if (window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)) {
+        
+        let indexPerson = persons.findIndex((person) => person.name.toLowerCase() === newName.toLowerCase())
+        let samePerson = persons[indexPerson]
+
+        personService
+          .update(samePerson.id, personObject)
+          .then(response => {
+            console.log('update success!')
+            let updatePerson = persons.filter(index => index.id !== samePerson.id)
+            updatePerson.push(response)
+            setPersons(updatePerson)
+            setFilteredPersons(updatePerson)
+          })
+          .catch(error => {
+            console.log('fail')
+          })
+      }
     } else {
       // Save the new input on server
       personService
         .create(personObject)
         .then(response => {
-          console.log('create entry with personService OK')
-          console.log(response)
-
-          // Add the input in the existing array of person
+          console.log('create success!')
           const newPersons = persons.concat(response)
 
           setPersons(newPersons)
@@ -53,22 +67,29 @@ const App = () => {
           setNewNumber('')
           setFilteredPersonValue('')
         })
+        .catch(error => {
+          console.log('fail')
+        })
     }
   }
 
   const removePerson = (event, removed) => {
     event.preventDefault()
-    window.confirm(`Delete ${removed.id}?`)
 
-    personService
-    .remove(removed.id)
-    .then( () => {
-      console.log('delete entry with personService OK')
-      let newList = persons.filter( (person) => removed.id !== person.id )
-
-      setPersons(newList)
-      setFilteredPersons(newList)
-    })
+    if (window.confirm(`Delete ${removed.id}?`)) {
+      personService
+      .remove(removed.id)
+      .then( () => {
+        console.log('delete success!')
+        let newList = persons.filter( (person) => removed.id !== person.id )
+  
+        setPersons(newList)
+        setFilteredPersons(newList)
+      })
+      .catch(error => {
+        console.log('fail')
+      })
+    }
   }
 
   // save user input to array

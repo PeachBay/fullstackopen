@@ -3,6 +3,7 @@ import Filter from './components/Filter'
 import Persons from './components/Persons'
 import PersonForm from './components/PersonForm'
 import personService from './services/persons'
+import Notifications from './components/Notifications'
 
 const App = () => {
 
@@ -11,6 +12,8 @@ const App = () => {
   const [ newNumber, setNewNumber ] = useState('')
   const [ filteredPersonValue, setFilteredPersonValue ] = useState('')
   const [ filteredPersons, setFilteredPersons ] = useState([])
+  const [ notifMessage, setNotifMessage ] = useState('')
+  const [ notifTypes, setNotifTypes ] = useState('')
   
 
   // fetch data from json
@@ -24,6 +27,7 @@ const App = () => {
         setFilteredPersons(response)
       })
   }, [])
+
 
   const addPerson = (event) => {
     event.preventDefault()
@@ -47,9 +51,27 @@ const App = () => {
             updatePerson.push(response)
             setPersons(updatePerson)
             setFilteredPersons(updatePerson)
+
+            // Reset the input string
+            setNewName('')
+            setNewNumber('')
+            setFilteredPersonValue('')
+
+            //success added
+            setNotifMessage(`'${samePerson.name}' s number have been updated`)
+            setNotifTypes('success')
+            setTimeout(() => {
+              setNotifMessage(null)
+            }, 5000)
           })
           .catch(error => {
             console.log('fail')
+            //Notification
+            setNotifMessage(`'${samePerson.name}' has already been removed from the server`)
+            setNotifTypes('error')
+            setTimeout(() => {
+              setNotifMessage(null)
+            }, 5000)
           })
       }
     } else {
@@ -66,9 +88,23 @@ const App = () => {
           setNewName('')
           setNewNumber('')
           setFilteredPersonValue('')
+
+          //Notification
+          setNotifMessage(`'${response.name}' is successfully added.`)
+          setNotifTypes('success')
+          setTimeout(() => {
+            setNotifMessage(null)
+          }, 5000)
         })
         .catch(error => {
           console.log('fail')
+          //Notification
+          setNotifMessage(`'${personObject.name}' is already on the server.`)
+          setNotifTypes('error')
+          setTimeout(() => {
+            setNotifMessage(null)
+            setNotifTypes('')
+          }, 5000)
         })
     }
   }
@@ -85,9 +121,24 @@ const App = () => {
   
         setPersons(newList)
         setFilteredPersons(newList)
+
+        //Notification
+        setNotifMessage(`${removed.name} is successfully deleted.`)
+        setNotifTypes('success')
+        setTimeout(() => {
+          setNotifMessage(null)
+          setNotifTypes('')
+        }, 5000)
       })
       .catch(error => {
         console.log('fail')
+        //Notification
+        setNotifMessage(`There's an error`)
+        setNotifTypes('error')
+        setTimeout(() => {
+          setNotifMessage(null)
+          setNotifTypes('')
+        }, 5000)
       })
     }
   }
@@ -110,6 +161,8 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+
+      <Notifications message={notifMessage} types={notifTypes} />
 
       <Filter 
         text="filter shown with:"

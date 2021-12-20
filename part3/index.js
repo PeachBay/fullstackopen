@@ -1,5 +1,8 @@
 const express = require('express')
+const morgan = require('morgan')
 const app = express()
+
+app.use(morgan('tiny'))
 
 app.use(express.json())
 
@@ -68,8 +71,6 @@ const generateId = () => {
 
 app.post('/api/persons', (request, response) => {
   const body = request.body
-
-  console.log(request)
 
   if (!body.name || !body.number || undefined != persons.find( ({ name }) => name === body.name )) {
     return response.status(400).json({ 

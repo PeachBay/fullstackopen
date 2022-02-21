@@ -96,12 +96,12 @@ app.post('/api/persons', (request, response) => {
   }
 
   const newPerson = new Person({
-    name: req.body.name,
-    number: req.body.number
+    name: request.body.name,
+    number: request.body.number
   })
 
-  newPerson.save().then(response => {
-    res.json(response)
+  newPerson.save().then(res => {
+    response.json(res)
   })
 })
   

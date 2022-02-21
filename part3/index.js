@@ -58,15 +58,15 @@ app.get('/api/persons', (request, response, next) => {
 })
 
 /* Get person id */
-app.get('/api/persons/:id', (request, response) => {
-  const id = Number(request.params.id)
-  const person = persons.find(person => person.id === id)
-
-  if (person) {
-    response.json(person)
-  } else {
-    response.status(404).end()
-  }
+app.get('/api/persons/:id', (request, response, next) => {
+  Person.findById(request.params.id).then(result => {
+    if (result) {
+      response.json(result)
+    }
+    else {
+      response.status(404).end()
+    }
+  }).catch(error => next(error))
 })
 
 /* Delete person by id */
@@ -79,30 +79,16 @@ app.delete('/api/persons/:id', (request, response, next) => {
 })
 
 /* Page for info entries */
-app.get('/info', (request, response) => {
-  const total = persons.length
-  const datetime = new Date()
-  response.send(`<p>Phonebook has info for ${total} people</p>` + datetime)
-  response.end() 
+app.get('/info', (request, response, next) => {
+  Person.countDocuments({}).then(count => {
+    let info = `<p>Phonebook has info for ${count} people</p>`
+    info += new Date()
+    response.send(info)
+  }).catch(error => next(error))
 })
-
-const generateId = () => {
-  const maxId = persons.length > 0
-    ? Math.max(...persons.map(n => n.id))
-    : 0
-  return maxId + 1
-}
 
 /* Add person */
 app.post('/api/persons', (request, response, next) => {
-  /* const body = request.body
-
-  if (!body.name || !body.number || undefined != persons.find( ({ name }) => name === body.name )) {
-    return response.status(400).json({ 
-      error: 'name must be unique'
-    })
-  } */
-
   const newPerson = new Person({
     name: request.body.name,
     number: request.body.number

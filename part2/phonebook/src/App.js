@@ -112,7 +112,7 @@ const App = () => {
   const removePerson = (event, removed) => {
     event.preventDefault()
 
-    if (window.confirm(`Delete ${removed.id}?`)) {
+    if (window.confirm(`Delete ${removed.name}?`)) {
       personService
       .remove(removed.id)
       .then( () => {

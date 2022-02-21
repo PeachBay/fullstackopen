@@ -44,17 +44,20 @@ let persons = [
     }
 ]
 
+/* Home page of the server */
 app.get('/', (request, response) => {
   response.send('<h1>Hello World!</h1>')
 })
-  
+
+/* Get person list */
 app.get('/api/persons', (request, response, next) => {
   Person.find({}).then(phonebook => {
     response.json(phonebook.map(person => person.toJSON()))
   })
-    .catch(error => next(error))
+  .catch(error => next(error))
 })
 
+/* Get person id */
 app.get('/api/persons/:id', (request, response) => {
   const id = Number(request.params.id)
   const person = persons.find(person => person.id === id)
@@ -66,6 +69,7 @@ app.get('/api/persons/:id', (request, response) => {
   }
 })
 
+/* Delete person by id */
 app.delete('/api/persons/:id', (request, response, next) => {
   Person.findByIdAndRemove(request.params.id)
     .then(result => {
@@ -74,6 +78,7 @@ app.delete('/api/persons/:id', (request, response, next) => {
     .catch(error => next(error))
 })
 
+/* Page for info entries */
 app.get('/info', (request, response) => {
   const total = persons.length
   const datetime = new Date()
@@ -88,6 +93,7 @@ const generateId = () => {
   return maxId + 1
 }
 
+/* Add person */
 app.post('/api/persons', (request, response, next) => {
   /* const body = request.body
 
@@ -108,6 +114,29 @@ app.post('/api/persons', (request, response, next) => {
     .catch(error => next(error))
 })
 
+/* Update an existing person */
+app.put('/api/persons/:id', (request, response, next) => {
+  if (!request.body.name) {
+    return response.status(400).json({
+      error: 'Name is missing'
+    })
+  }
+  else if (!request.body.number) {
+    return response.status(400).json({
+      error: 'Number is missing'
+    })
+  }
+
+  const updatedPerson = {
+    name: request.body.name,
+    number: request.body.number
+  }
+  Person.findByIdAndUpdate(request.params.id, updatedPerson, {new: true}).then(result => {
+    response.json(result)
+  }).catch(error => next(error))
+})
+
+/* Error handler */
 const errorHandler = (error, request, response, next) => {
   console.error(error.message)
 
@@ -119,7 +148,7 @@ const errorHandler = (error, request, response, next) => {
 }
 
 app.use(errorHandler)
-  
+
 const PORT = process.env.PORT
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)

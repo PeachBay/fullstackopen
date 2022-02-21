@@ -87,13 +87,13 @@ const generateId = () => {
 }
 
 app.post('/api/persons', (request, response) => {
-  const body = request.body
+  /* const body = request.body
 
   if (!body.name || !body.number || undefined != persons.find( ({ name }) => name === body.name )) {
     return response.status(400).json({ 
       error: 'name must be unique'
     })
-  }
+  } */
 
   const newPerson = new Person({
     name: request.body.name,

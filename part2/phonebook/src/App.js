@@ -66,8 +66,10 @@ const App = () => {
           })
           .catch(error => {
             console.log('fail')
+            console.log(error.response.data.error)
             //Notification
-            setNotifMessage(`'${samePerson.name}' has already been removed from the server`)
+            //setNotifMessage(`'${samePerson.name}' has already been removed from the server`)
+            setNotifMessage(error.response.data.error)
             setNotifTypes('error')
             setTimeout(() => {
               setNotifMessage(null)
@@ -98,8 +100,10 @@ const App = () => {
         })
         .catch(error => {
           console.log('fail')
+          console.log(error.response.data.error)
           //Notification
-          setNotifMessage(`'${personObject.name}' is already on the server.`)
+          //setNotifMessage(`'${personObject.name}' is already on the server.`)
+          setNotifMessage(error.response.data.error)
           setNotifTypes('error')
           setTimeout(() => {
             setNotifMessage(null)

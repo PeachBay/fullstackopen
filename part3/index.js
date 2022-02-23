@@ -21,29 +21,6 @@ app.use(morgan(function (tokens, req, res) {
 }))
 app.use(express.json())
 
-let persons = [
-    { 
-      "id": 1,
-      "name": "Arto Hellas", 
-      "number": "040-123456"
-    },
-    { 
-      "id": 2,
-      "name": "Ada Lovelace", 
-      "number": "39-44-5323523"
-    },
-    { 
-      "id": 3,
-      "name": "Dan Abramov", 
-      "number": "12-43-234345"
-    },
-    { 
-      "id": 4,
-      "name": "Mary Poppendieck", 
-      "number": "39-23-6423122"
-    }
-]
-
 /* Home page of the server */
 app.get('/', (request, response) => {
   response.send('<h1>Hello World!</h1>')
@@ -54,7 +31,7 @@ app.get('/api/persons', (request, response, next) => {
   Person.find({}).then(phonebook => {
     response.json(phonebook.map(person => person.toJSON()))
   })
-  .catch(error => next(error))
+    .catch(error => next(error))
 })
 
 /* Get person id */
@@ -72,7 +49,7 @@ app.get('/api/persons/:id', (request, response, next) => {
 /* Delete person by id */
 app.delete('/api/persons/:id', (request, response, next) => {
   Person.findByIdAndRemove(request.params.id)
-    .then(result => {
+    .then( () => {
       response.status(204).end()
     })
     .catch(error => next(error))
@@ -117,13 +94,13 @@ app.put('/api/persons/:id', (request, response, next) => {
     number: request.body.number
   }
   Person.findByIdAndUpdate(
-    request.params.id, 
-    updatedPerson, 
-    {new: true, runValidators: true, context: 'query'})
-  .then(result => {
-    response.json(result)
+    request.params.id,
+    updatedPerson,
+    { new: true, runValidators: true, context: 'query' })
+    .then(result => {
+      response.json(result)
     })
-  .catch(error => next(error))
+    .catch(error => next(error))
 })
 
 /* Error handler */

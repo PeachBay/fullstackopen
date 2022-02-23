@@ -5,10 +5,8 @@ if (process.argv.length < 3) {
   process.exit(1)
 }
 
-const password = process.argv[2]
-
 const url =
-  `mongodb+srv://tiffenydev:<password>@cluster0.yyh3v.mongodb.net/phonebook?retryWrites=true&w=majority`
+  'mongodb+srv://tiffenydev:<password>@cluster0.yyh3v.mongodb.net/phonebook?retryWrites=true&w=majority'
 
 mongoose.connect(url)
 
@@ -28,14 +26,14 @@ if (process.argv.length === 3) {
     })
     mongoose.connection.close()
   })
-} 
+}
 /* Add new person into database with cmd-line : password name number */
 else if (process.argv.length === 5) {
   const person = new Person({
     name: process.argv[3],
     number: process.argv[4]
   })
-  
+
   person.save().then( () => {
     console.log(`added name ${process.argv[3]} and number ${process.argv[4]} to phonebook`)
     mongoose.connection.close()

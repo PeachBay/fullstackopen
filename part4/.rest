@@ -2,8 +2,8 @@ POST http://localhost:3003/api/blogs HTTP/1.1
 content-type: application/json
 
 {
-  "title": "title test",
+  "title": "Another Reddit URL",
   "author": "test",
   "url": "https://reddit.com",
-  "likes": 1
+  "likes": 5
 }

@@ -26,14 +26,6 @@ const blogs = [
     __v: 0
   },
   {
-    _id: 'whoc4r3',
-    title: 'The most liked blog list',
-    author: 'Tiffeny',
-    url: 'http://github.com',
-    likes: 12,
-    __v: 0
-  },
-  {
     _id: '5a422b891b54a676234d17fa',
     title: 'First class tests',
     author: 'Robert C. Martin',
@@ -60,12 +52,17 @@ const blogs = [
 ]
 
 const mostLikedBlog = {
-  _id: 'whoc4r3',
-  title: 'The most liked blog list',
-  author: 'Tiffeny',
-  url: 'http://github.com',
+  _id: '5a422b3a1b54a676234d17f9',
+  title: 'Canonical string reduction',
+  author: 'Edsger W. Dijkstra',
+  url: 'http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html',
   likes: 12,
   __v: 0
+}
+
+const topAuthor = {
+  author: 'Robert C. Martin',
+  blogs: 3
 }
 
 test('dummy returns one', () => {
@@ -80,9 +77,16 @@ describe('total likes', () => {
   })
 })
 
-describe('return blog with most like', () => {
+describe('fav blog', () => {
   test('blog with highest like', () => {
     const result = listHelper.favoriteBlog(blogs)
     expect(result).toEqual(mostLikedBlog)
+  })
+})
+
+describe('most author', () => {
+  test('author with most blogs', () => {
+    const result = listHelper.mostBlogs(blogs)
+    expect(result).toEqual(topAuthor)
   })
 })

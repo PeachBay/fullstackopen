@@ -65,7 +65,7 @@ const topAuthor = {
   blogs: 3
 }
 
-test('dummy returns one', () => {
+test('dummy return one', () => {
   const result = listHelper.dummy(blogs)
   expect(result).toBe(1)
 })
@@ -84,9 +84,21 @@ describe('fav blog', () => {
   })
 })
 
-describe('most author', () => {
+describe('author most blogs', () => {
   test('author with most blogs', () => {
     const result = listHelper.mostBlogs(blogs)
     expect(result).toEqual(topAuthor)
+  })
+})
+
+describe('author most likes', () => {
+  test('author with most likes', () => {
+    const result = listHelper.mostLikes(blogs)
+    expect(result).toEqual(
+      {
+        author: 'Edsger W. Dijkstra',
+        likes: 12
+      }
+    )
   })
 })

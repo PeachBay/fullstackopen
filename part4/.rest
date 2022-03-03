@@ -2,8 +2,31 @@ POST http://localhost:3003/api/blogs HTTP/1.1
 content-type: application/json
 
 {
-  "title": "Another Reddit URL",
-  "author": "test",
+  "title": "TravelL",
+  "author": "BOL4",
   "url": "https://reddit.com",
   "likes": 5
+}
+
+###
+
+POST http://localhost:3003/api/blogs HTTP/1.1
+content-type: application/json
+
+{
+  "title": "Falling Alone",
+  "author": "Aime",
+  "url": "https://reddit.com",
+  "likes": 15
+}
+
+###
+POST http://localhost:3003/api/blogs HTTP/1.1
+content-type: application/json
+
+{
+  "title": "ONION!",
+  "author": "ONE OK ROCK",
+  "url": "https://reddit.com",
+  "likes": 8
 }

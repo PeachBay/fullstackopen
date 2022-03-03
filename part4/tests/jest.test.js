@@ -97,7 +97,7 @@ describe('author most likes', () => {
     expect(result).toEqual(
       {
         author: 'Edsger W. Dijkstra',
-        likes: 12
+        likes: 17
       }
     )
   })

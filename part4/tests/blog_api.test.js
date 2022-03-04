@@ -69,6 +69,73 @@ describe('deletion of one blog', () => {
   })
 })
 
+describe('update blog', () => {
+
+  test('update an existing blog', async () => {
+    const blogsAtStart = await helper.blogsInDb()
+
+    const newBlog = {
+      title: 'Go brrrrrrr',
+      author: 'Hime',
+      url: 'http://reddit.com',
+      likes: 100,
+    }
+    const response = await api.put('/api/blogs/' + blogsAtStart[0].id).send(newBlog)
+
+    expect(response.body.id).toBe(blogsAtStart[0].id)
+
+    delete response.body.id
+    expect(response.body).toEqual(newBlog)
+
+    const blogsAtEnd = await helper.blogsInDb()
+    expect(blogsAtEnd.length).toBe(blogsAtStart.length)
+
+    delete blogsAtEnd[0].id
+    expect(blogsAtEnd[0]).toEqual(newBlog)
+  })
+
+  test('cannot update without title', async () => {
+    const blogsAtStart = await helper.blogsInDb()
+    const newBlog = {
+      author: 'Hime',
+      url: 'http://reddit.com'
+    }
+    const response = await api.put('/api/blogs/' + blogsAtStart[0].id).send(newBlog)
+
+    expect(response.body.error).toBeDefined()
+
+    const blogsAtEnd = await helper.blogsInDb()
+    expect(blogsAtEnd.length).toBe(blogsAtStart.length)
+  })
+
+  test('cannot update without url', async () => {
+    const blogsAtStart = await helper.blogsInDb()
+
+    const newBlog = {
+      title: 'Not working',
+      author: 'Hime'
+    }
+    const response = await api.put('/api/blogs/' + blogsAtStart[0].id).send(newBlog)
+
+    expect(response.body.error).toBeDefined()
+
+    const blogsAtEnd = await helper.blogsInDb()
+    expect(blogsAtEnd.length).toBe(blogsAtStart.length)
+  })
+
+  test('update an existing blog without likes', async () => {
+    const blogsAtStart = await helper.blogsInDb()
+    const newBlog = {
+      title: 'Add blog',
+      author: 'Hime',
+      url: 'https://reddit.com'
+    }
+    const response = await api.put('/api/blogs/' + blogsAtStart[0].id).send(newBlog)
+
+    expect(response.body.likes).toBe(0)
+  })
+})
+
 afterAll(() => {
   mongoose.connection.close()
 })

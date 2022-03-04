@@ -19,15 +19,14 @@ test('blogs contain an id', async () => {
   })
 })
 
-describe('add new blog endpoint', () => {
-
+describe('add new blog', () => {
   test('can add a new blog', async () => {
     // Add new blog
     const newBlog = {
-      title: 'Falling Alone',
-      author: 'Aime',
+      title: 'ONION!',
+      author: 'ONE OK ROCK',
       url: 'https://reddit.com',
-      likes: 15
+      likes: 8
     }
     const post_response = await api
       .post('/api/blogs')
@@ -45,6 +44,28 @@ describe('add new blog endpoint', () => {
     // Verify that the total number of blogs has increased by 1
     const get_response = await api.get('/api/blogs')
     expect(get_response.body.length).toEqual(helper.initialBlogs.length + 1)
+  })
+})
+
+describe('deletion of one blog', () => {
+  test('succeeds with status code 204 if id is valid', async () => {
+    const blogsAtStart = await helper.blogsInDb()
+    const blogToDelete = blogsAtStart[0]
+
+    await api
+      .delete(`/api/blogs/${blogToDelete.id}`)
+      .expect(204)
+
+    const blogsAtEnd = await helper.blogsInDb()
+    console.log(blogsAtEnd)
+
+    expect(blogsAtEnd).toHaveLength(
+      helper.initialBlogs.length - 1
+    )
+
+    const contents = blogsAtEnd.map(r => r.content)
+
+    expect(contents).not.toContain(blogToDelete.content)
   })
 })
 

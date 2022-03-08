@@ -1,33 +1,49 @@
 const mongoose = require('mongoose')
 const supertest = require('supertest')
 const app = require('../app')
-const blog = require('../models/blog')
+const Blog = require('../models/blog')
+const User = require('../models/user')
 const api = supertest(app)
+const bcrypt = require('bcrypt')
 const helper = require('./test_helper')
 
 beforeEach(async () => {
-  await blog.deleteMany({})
+  await User.deleteMany({})
+  const passwordHash = await bcrypt.hash('sekret', 10)
+  const user = new User({ username: 'root', passwordHash, _id: '622795fdae2d715ab298e3a4' })
+  await user.save()
 
-  let blogObject = new blog(helper.initialBlogs[0])
+  await Blog.deleteMany({})
+  let blogObject = new Blog(helper.initialBlogs[0])
   await blogObject.save()
-  blogObject = new blog(helper.initialBlogs[1])
+  blogObject = new Blog(helper.initialBlogs[1])
   await blogObject.save()
-  blogObject = new blog(helper.initialBlogs[2])
+  blogObject = new Blog(helper.initialBlogs[2])
   await blogObject.save()
 })
 
-test('blogs are returned as json', async () => {
-  await api
-    .get('/api/blogs')
-    .expect(200)
-    .expect('Content-Type', /application\/json/)
-}, 100000)
+describe('get list of blogs', () => {
+  test('blogs are returned as json', async () => {
+    await api
+      .get('/api/blogs')
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
+  }, 100000)
 
-test('blogs contain an id', async () => {
-  const response = await api.get('/api/blogs')
+  test('blogs contain an id', async () => {
+    const response = await api.get('/api/blogs')
 
-  response.body.forEach(blog => {
-    expect(blog.id).toBeDefined()
+    response.body.forEach(blog => {
+      expect(blog.id).toBeDefined()
+    })
+  })
+
+  test('blogs contain a user', async () => {
+    const response = await api.get('/api/blogs')
+
+    response.body.forEach(blog => {
+      expect(blog.user).toBeDefined()
+    })
   })
 })
 
@@ -38,7 +54,8 @@ describe('add new blog', () => {
       title: 'ONION!',
       author: 'ONE OK ROCK',
       url: 'https://reddit.com',
-      likes: 8
+      likes: 8,
+      user: '622795fdae2d715ab298e3a4'
     }
     const post_response = await api
       .post('/api/blogs')

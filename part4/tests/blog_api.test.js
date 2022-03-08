@@ -1,8 +1,20 @@
 const mongoose = require('mongoose')
 const supertest = require('supertest')
 const app = require('../app')
+const blog = require('../models/blog')
 const api = supertest(app)
 const helper = require('./test_helper')
+
+beforeEach(async () => {
+  await blog.deleteMany({})
+
+  let blogObject = new blog(helper.initialBlogs[0])
+  await blogObject.save()
+  blogObject = new blog(helper.initialBlogs[1])
+  await blogObject.save()
+  blogObject = new blog(helper.initialBlogs[2])
+  await blogObject.save()
+})
 
 test('blogs are returned as json', async () => {
   await api
@@ -57,15 +69,14 @@ describe('deletion of one blog', () => {
       .expect(204)
 
     const blogsAtEnd = await helper.blogsInDb()
-    console.log(blogsAtEnd)
 
     expect(blogsAtEnd).toHaveLength(
       helper.initialBlogs.length - 1
     )
 
-    const contents = blogsAtEnd.map(r => r.content)
+    const titles = blogsAtEnd.map(r => r.title)
 
-    expect(contents).not.toContain(blogToDelete.content)
+    expect(titles).not.toContain(blogToDelete.title)
   })
 })
 

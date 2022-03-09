@@ -36,12 +36,13 @@ describe('get list of blogs', () => {
   test('blogs are returned as json', async () => {
     await api
       .get('/api/blogs')
+      .set('authorization', `bearer ${token}`)
       .expect(200)
       .expect('Content-Type', /application\/json/)
   }, 100000)
 
   test('blogs contain an id', async () => {
-    const response = await api.get('/api/blogs')
+    const response = await api.get('/api/blogs').set('authorization', `bearer ${token}`)
 
     response.body.forEach(blog => {
       expect(blog.id).toBeDefined()
@@ -49,7 +50,7 @@ describe('get list of blogs', () => {
   })
 
   test('blogs contain a user', async () => {
-    const response = await api.get('/api/blogs')
+    const response = await api.get('/api/blogs').set('authorization', `bearer ${token}`)
 
     response.body.forEach(blog => {
       expect(blog.user).toBeDefined()
@@ -83,7 +84,7 @@ describe('add new blog', () => {
     expect(post_response.body).toEqual(expectedResponse)
 
     // Verify that the total number of blogs has increased by 1
-    const get_response = await api.get('/api/blogs')
+    const get_response = await api.get('/api/blogs').set('authorization', `bearer ${token}`)
     expect(get_response.body.length).toEqual(helper.initialBlogs.length + 1)
   })
 })
@@ -151,7 +152,7 @@ describe('update blog', () => {
       likes: 100,
     }
     const expectedResponse = { ...newBlog, user: '622795fdae2d715ab298e3a4' }
-    const response = await api.put('/api/blogs/' + blogsAtStart[0].id).send(newBlog)
+    const response = await api.put('/api/blogs/' + blogsAtStart[0].id).set('authorization', `bearer ${token}`).send(newBlog)
 
     expect(response.body.id).toBe(blogsAtStart[0].id)
 
@@ -172,7 +173,7 @@ describe('update blog', () => {
       author: 'Hime',
       url: 'http://reddit.com'
     }
-    const response = await api.put('/api/blogs/' + blogsAtStart[0].id).send(newBlog)
+    const response = await api.put('/api/blogs/' + blogsAtStart[0].id).set('authorization', `bearer ${token}`).send(newBlog)
 
     expect(response.body.error).toBeDefined()
 
@@ -187,7 +188,7 @@ describe('update blog', () => {
       title: 'Not working',
       author: 'Hime'
     }
-    const response = await api.put('/api/blogs/' + blogsAtStart[0].id).send(newBlog)
+    const response = await api.put('/api/blogs/' + blogsAtStart[0].id).set('authorization', `bearer ${token}`).send(newBlog)
 
     expect(response.body.error).toBeDefined()
 
@@ -202,7 +203,7 @@ describe('update blog', () => {
       author: 'Hime',
       url: 'https://reddit.com'
     }
-    const response = await api.put('/api/blogs/' + blogsAtStart[0].id).send(newBlog)
+    const response = await api.put('/api/blogs/' + blogsAtStart[0].id).set('authorization', `bearer ${token}`).send(newBlog)
 
     expect(response.body.likes).toBe(0)
   })

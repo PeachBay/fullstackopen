@@ -6,6 +6,9 @@ const User = require('../models/user')
 const api = supertest(app)
 const bcrypt = require('bcrypt')
 const helper = require('./test_helper')
+const jwt = require('jsonwebtoken')
+
+let token = undefined
 
 beforeEach(async () => {
   await User.deleteMany({})
@@ -20,6 +23,13 @@ beforeEach(async () => {
   await blogObject.save()
   blogObject = new Blog(helper.initialBlogs[2])
   await blogObject.save()
+
+  const userForToken = {
+    username: user.username,
+    id: user._id,
+  }
+
+  token = jwt.sign(userForToken, process.env.SECRET)
 })
 
 describe('get list of blogs', () => {
@@ -54,21 +64,23 @@ describe('add new blog', () => {
       title: 'ONION!',
       author: 'ONE OK ROCK',
       url: 'https://reddit.com',
-      likes: 8,
-      user: '622795fdae2d715ab298e3a4'
+      likes: 8
     }
     const post_response = await api
       .post('/api/blogs')
+      .set('authorization', `bearer ${token}`)
       .send(newBlog)
       .expect(201)
       .expect('Content-Type', /application\/json/)
+
+    const expectedResponse = { ...newBlog, user: '622795fdae2d715ab298e3a4' }
 
     // Make sure it got an ID assigned
     expect(post_response.body.id).toBeDefined()
 
     // Remove the ID and make sure the rest of the properties have the right data
     delete post_response.body.id
-    expect(post_response.body).toEqual(newBlog)
+    expect(post_response.body).toEqual(expectedResponse)
 
     // Verify that the total number of blogs has increased by 1
     const get_response = await api.get('/api/blogs')

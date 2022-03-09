@@ -13,7 +13,7 @@ let token = undefined
 beforeEach(async () => {
   await User.deleteMany({})
   const passwordHash = await bcrypt.hash('sekret', 10)
-  const user = new User({ username: 'root', passwordHash, _id: '622795fdae2d715ab298e3a4' })
+  let user = new User({ username: 'root', passwordHash, _id: '622795fdae2d715ab298e3a4' })
   await user.save()
 
   await Blog.deleteMany({})
@@ -95,6 +95,7 @@ describe('deletion of one blog', () => {
 
     await api
       .delete(`/api/blogs/${blogToDelete.id}`)
+      .set('authorization', `bearer ${token}`)
       .expect(204)
 
     const blogsAtEnd = await helper.blogsInDb()
@@ -106,6 +107,35 @@ describe('deletion of one blog', () => {
     const titles = blogsAtEnd.map(r => r.title)
 
     expect(titles).not.toContain(blogToDelete.title)
+  })
+
+  test('returns forbidden if blog is not owned by user', async () => {
+    const blogsAtStart = await helper.blogsInDb()
+    const blogToDelete = blogsAtStart[0]
+
+    const userForToken = {
+      username: 'root-2',
+      id: 'anotherid',
+    }
+
+    token = jwt.sign(userForToken, process.env.SECRET)
+
+    const response = await api
+      .delete(`/api/blogs/${blogToDelete.id}`)
+      .set('authorization', `bearer ${token}`)
+      .expect(403)
+
+    expect(response.body.error).toEqual('You cannot delete a blog you do not own.')
+
+    const blogsAtEnd = await helper.blogsInDb()
+
+    expect(blogsAtEnd).toHaveLength(
+      helper.initialBlogs.length
+    )
+
+    const titles = blogsAtEnd.map(r => r.title)
+
+    expect(titles).toContain(blogToDelete.title)
   })
 })
 
@@ -120,17 +150,19 @@ describe('update blog', () => {
       url: 'http://reddit.com',
       likes: 100,
     }
+    const expectedResponse = { ...newBlog, user: '622795fdae2d715ab298e3a4' }
     const response = await api.put('/api/blogs/' + blogsAtStart[0].id).send(newBlog)
 
     expect(response.body.id).toBe(blogsAtStart[0].id)
 
     delete response.body.id
-    expect(response.body).toEqual(newBlog)
+    expect(response.body).toEqual(expectedResponse)
 
     const blogsAtEnd = await helper.blogsInDb()
     expect(blogsAtEnd.length).toBe(blogsAtStart.length)
 
     delete blogsAtEnd[0].id
+    delete blogsAtEnd[0].user
     expect(blogsAtEnd[0]).toEqual(newBlog)
   })
 

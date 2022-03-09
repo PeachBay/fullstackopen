@@ -39,16 +39,32 @@ blogsRouter.post('/', async (request, response) => {
 })
 
 blogsRouter.delete('/:id', async (request, response) => {
-  await Blog.findByIdAndRemove(request.params.id)
+  const token = request.token
+  const decodedToken = jwt.verify(token, process.env.SECRET)
+
+  if (!decodedToken.id) {
+    return response.status(401).json({
+      error: 'token missing or invalid'
+    })
+  }
+
+  const blog = await Blog.findById(request.params.id).populate('user')
+
+  if (decodedToken.id !==  blog.user._id.toString()) {
+    return response.status(403).json({ error: 'You cannot delete a blog you do not own.' })
+  }
+
+  await Blog.remove({ _id: request.params.id })
+
   return response.status(204).end()
 })
 
 blogsRouter.put('/:id', async (request, response) => {
   if (!request.body.hasOwnProperty('title')) {
-    return response.status(400).json({error: 'Missing title property'})
+    return response.status(400).json({ error: 'Missing title property' })
   }
   if (!request.body.hasOwnProperty('url')) {
-    return response.status(400).json({error: 'Missing url property'})
+    return response.status(400).json({ error: 'Missing url property' })
   }
 
   const newBlog = {

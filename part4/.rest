@@ -30,3 +30,13 @@ content-type: application/json
   "url": "https://reddit.com",
   "likes": 8
 }
+
+###
+POST http://localhost:3003/api/users HTTP/1.1
+content-type: application/json
+
+{
+  "username": "Tiffeny",
+  "name": "Kith",
+  "password": "Testing12"
+}
